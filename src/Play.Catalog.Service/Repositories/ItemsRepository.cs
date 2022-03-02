@@ -7,20 +7,16 @@ using Play.Catalog.Service.Entities;
 
 namespace Play.Catalog.Service.Repositories
 {
-    public class ItemsRepository
+
+    public class ItemsRepository : IItemsRepository
     {
         private const string collectionName = "items";
         private readonly IMongoCollection<Item> dbCollection;
         private readonly FilterDefinitionBuilder<Item> filterBuilder = Builders<Item>.Filter;
 
-        public ItemsRepository()
+        public ItemsRepository(IMongoDatabase database)
         {
-            //Specify connection string in order to connect to mongoDB
-            var mongoClient = new MongoClient("mongodb://localhost:27017");
-            //object that actually represents the data base
-            var dataBase = mongoClient.GetDatabase("Catalog");
-            //gets the collection which is simillar to get a table in a relational DB
-            dbCollection = dataBase.GetCollection<Item>(collectionName);
+            dbCollection = database.GetCollection<Item>(collectionName);
         }
 
         public async Task<IReadOnlyCollection<Item>> GetAllAsync()
